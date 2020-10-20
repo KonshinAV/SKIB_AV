@@ -2,6 +2,6 @@
   "dc_name": "dc.abc.local",
   "domain_name": "abc.local",
   "root": "dc=abc,dc=local",
-  "ldap_user": "konshin.av",
+  "ldap_user": "spb-kav@abc.local",
   "ldap_spwd": "PVFtY3djSEprQUVV"
 }
