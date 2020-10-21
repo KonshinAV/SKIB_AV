@@ -1,7 +1,7 @@
 {
-  "dc_name": "dc.abc.local",
+  "server_name": "dc.abc.local",
   "domain_name": "abc.local",
   "root": "dc=abc,dc=local",
-  "ldap_user": "spb-kav@abc.local",
-  "ldap_spwd": "PVFtY3djSEprQUVV"
+  "user": "spb-kav",
+  "spwd": "PVFtY3djSEprQUVV"
 }

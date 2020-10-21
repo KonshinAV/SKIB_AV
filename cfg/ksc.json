@@ -1,6 +1,6 @@
 {
   "ksc_main":{
-    "ksc_name": "ksc.abc.local",
+    "server_name": "ksc.abc.local",
     "domain_name": "abc.local",
     "db_server_name":  "SQL.abc.local",
     "db_name": "KAVDB",
@@ -8,7 +8,7 @@
     "spwd": "PVFtY3djSEprQUVV"
   },
   "ksc_any":{
-    "ksc_name": "any.abc.local",
+    "server_name": "any.abc.local",
     "domain_name": "any.local",
     "db_server_name":  "any.abc.local",
     "db_name": "any",

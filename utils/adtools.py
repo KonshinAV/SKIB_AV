@@ -1,15 +1,31 @@
 from ldap3 import Server, Connection, SUBTREE, LEVEL, SYNC, ALL_ATTRIBUTES, ALL
-from utils.secure_string import SecureString
+
+class ActiveDirectory:
+    def __init__(self, dc_server_name, dc_root, dc_user, dc_pwd, dc_domain_name, dc_auto_connection = True):
+        self.dc_server_name = dc_server_name
+        self.dc_root = dc_root
+        self.dc_user = dc_user
+        self.dc_pwd = dc_pwd
+        self.dc_domain_name = dc_domain_name
+        self.dc_connection = self.create_connection() if dc_auto_connection is True else None
+
+    def create_connection (self):
+        server = Server(self.dc_server_name, get_info=ALL)
+        conn = Connection(server, user = self.dc_user, password = self.dc_pwd, auto_bind=True)
+        return conn
 
 
+    def get_all_computers(self):
+        pass
 
-def test_ad_con():
-    server = Server('dc.abc.local', get_info=ALL)
-    conn = Connection(server, 'konshin.av', 'P@$$w0rd',
-                           auto_bind=True)
-    conn.search('dc=abc,dc=local', '(objectclass=computer)')
-    # for  i in conn.entries: print(i)
-    return conn.entries
+    def get_computer (self, computer_name,  attrs):
+        self.computer_name = computer_name
+        self.attrs = attrs
+        pass
+
+    def get_computers_in_ou (self, ou_name):
+        self.ou_name = ou_name
+        pass
 
 if __name__ == '__main__':
     pass
