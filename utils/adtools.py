@@ -1,5 +1,6 @@
 from ldap3 import Server, Connection, SUBTREE, LEVEL, SYNC, ALL_ATTRIBUTES, ALL
 from datetime import datetime
+from pprint import pprint
 
 class ActiveDirectory:
     def __init__(self, dc_server_name, dc_root, dc_user, dc_pwd, dc_domain_name, dc_auto_connection = True):
@@ -11,12 +12,47 @@ class ActiveDirectory:
         self.dc_connection = self.create_connection() if dc_auto_connection is True else None
 
     def create_connection (self):
+        '''
+        Метод создания подключения к AD с использованием LDAP
+
+        :return: Connection
+        '''
         server = Server(self.dc_server_name, get_info=ALL)
         conn = Connection(server, user = self.dc_user, password = self.dc_pwd, auto_bind=True)
         return conn
 
 
-    def get_computer (self, computer_name):
+    def get_computer (self, computer_name, find_criteria = 'CN'):
+        '''
+        Метод поиска записи типа Computer  в домене и сбора атрибутов записи.
+
+        Поддерживаются следующие атрибуты:
+         existInDomian:bool
+         name:str
+         displayName:str
+         distinguishedName:str
+         distinguishedName_reversed:str
+         enabled:bool
+         location:str
+         dNSHostName:str
+         lastLogoff:datetime/None
+         lastLogon::datetime/None
+         lastLogonTimestamp::datetime/None
+         objectCategory:str
+         objectClass:str
+         objectSid:str
+         OperatingSystem:str
+         operatingSystemVersion:str
+         sAMAccountName:str
+         userAccountControl:int
+         whenCreated::datetime/None
+         whenChanged:datetime/None
+         uptime:int/None
+
+        :param computer_name:str: имя искомого устройства
+        :find_criteria:
+        :return:
+        '''
         self.find_name = computer_name
         self.ad_attrs = ('name',
                          'distinguishedName',
@@ -36,14 +72,14 @@ class ActiveDirectory:
                          'whenChanged',
                          )
         self.dc_connection.search(search_base=self.dc_root,
-                                  search_filter=f"(&(objectCategory=Computer)(CN={computer_name}))",
+                                  search_filter=f"(&(objectCategory=Computer)({find_criteria}={computer_name}))",
                                   search_scope=SUBTREE,
                                   attributes=self.ad_attrs
                                   )
         entries  = self.dc_connection.entries
         ad_computer = {}
         if len(entries) == 0:
-            return  False
+            return  None
         else:
             entries = entries[0]
             ad_computer['existInDomian'] = True
@@ -96,9 +132,27 @@ class ActiveDirectory:
         pass
 
 
-    def get_computers_in_ou (self, ou_name):
-        self.ou_name = ou_name
-        pass
+    def get_computers_in_ou (self, search_base=None):
+        '''
+        Метод поиска записей типа Computer в домене по OU всех его потомках.
+
+        :param search_base: str/None: Принимается полный путь OU в нотации AD. 'OU=XXX,OU=XXX,DC=XXX,DC=XXX'
+                            Если не задано, то будет использоваться корень домена, как значение по умолчанию.
+        :return: Кортеж, состоящий из элементов - записей компьютеров и их атрибутов.
+                Если в OU  ничего не будет найдено - вернется пустой кортеж.
+                Если OU задан некорректно - вернется пустой кортеж. Будет выполнена попытся его поиска в AD.
+
+        '''
+        search_base = self.dc_root if search_base is None else search_base
+        entries = self.dc_connection.extend.standard.paged_search(search_base=search_base,
+                                                                  search_filter=f'(&(ObjectCategory=Computer))',
+                                                                  search_scope=SUBTREE,
+                                                                  attributes=['name'],
+                                                                  paged_size=5,
+                                                                  generator=True
+                                                                  )
+        computers = (self.get_computer(record['attributes']['name']) for record in entries if 'attributes' in record.keys())
+        return tuple(computers)
 
 if __name__ == '__main__':
     pass
