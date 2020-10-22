@@ -1,0 +1,18 @@
+{
+  "ksc_main":{
+    "server_name": "ksc.abc.local",
+    "domain_name": "abc.local",
+    "db_server_name":  "SQL.abc.local",
+    "db_name": "KAVDB",
+    "user": "spb-kav@abc.local",
+    "spwd": "PVFtY3djSEprQUVV"
+  },
+  "ksc_any":{
+    "server_name": "any.abc.local",
+    "domain_name": "any.local",
+    "db_server_name":  "any.abc.local",
+    "db_name": "any",
+    "user": "spb-kav@abc.local",
+    "spwd": "PVFtY3djSEprQUVV"
+  }
+}
