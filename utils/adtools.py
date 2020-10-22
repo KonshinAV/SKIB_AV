@@ -128,8 +128,16 @@ class ActiveDirectory:
                 ad_computer['uptime'] = None
         return ad_computer
 
-    def get_all_computers(self):
-        pass
+
+    def get_all_computers_for_list(self, computers_list, find_criteria = 'CN'):
+        '''
+        Метод загрузки информации по списку устройств.
+        :param computers_dict:list/turple: Входной список записей, поиск по которым требуется выполнить
+        :find_criteria:str: Критерий по которому требуется выполнить поиск, по умолчанию = 'CN'
+        :return:dict: Словарь результатов, key = искомое значение, value = результат поиска по домену (dict/None)
+        '''
+        computers_dict = {pc:self.get_computer(pc, find_criteria) for pc in computers_list}
+        return computers_dict
 
 
     def get_computers_in_ou (self, search_base=None):
