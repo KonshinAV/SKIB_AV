@@ -1,15 +1,14 @@
-from ldap3 import Server, Connection, SUBTREE, LEVEL, SYNC, ALL_ATTRIBUTES, ALL
+from ldap3 import Server, Connection, SUBTREE, ALL
 from datetime import datetime
-from pprint import pprint
 
 class ActiveDirectory:
-    def __init__(self, dc_server_name, dc_root, dc_user, dc_pwd, dc_domain_name, dc_auto_connection = True):
-        self.dc_server_name = dc_server_name
-        self.dc_root = dc_root
-        self.dc_user = dc_user
-        self.dc_pwd = dc_pwd
-        self.dc_domain_name = dc_domain_name
-        self.dc_connection = self.create_connection() if dc_auto_connection is True else None
+    def __init__(self, server_name, root, username, pwd, domain_name, auto_connection = True):
+        self.dc_server_name = server_name
+        self.dc_root = root
+        self.dc_user = username
+        self.dc_pwd = pwd
+        self.dc_domain_name = domain_name
+        self.dc_connection = self.create_connection() if auto_connection is True else None
 
     def create_connection (self):
         '''
@@ -129,10 +128,10 @@ class ActiveDirectory:
         return ad_computer
 
 
-    def get_all_computers_for_list(self, computers_list, find_criteria = 'CN'):
+    def get_computers_for_list(self, computers_list, find_criteria = 'CN'):
         '''
         Метод загрузки информации по списку устройств.
-        :param computers_dict:list/turple: Входной список записей, поиск по которым требуется выполнить
+        :param computers_dict:list/tuple: Входной список записей, поиск по которым требуется выполнить
         :find_criteria:str: Критерий по которому требуется выполнить поиск, по умолчанию = 'CN'
         :return:dict: Словарь результатов, key = искомое значение, value = результат поиска по домену (dict/None)
         '''

@@ -4,7 +4,7 @@
     "domain_name": "abc.local",
     "db_server_name":  "SQL.abc.local",
     "db_name": "KAVDB",
-    "user": "spb-kav@abc.local",
+    "user": "sa",
     "spwd": "PVFtY3djSEprQUVV"
   },
   "ksc_any":{
@@ -12,7 +12,7 @@
     "domain_name": "any.local",
     "db_server_name":  "any.abc.local",
     "db_name": "any",
-    "user": "spb-kav@abc.local",
+    "user": "sa",
     "spwd": "PVFtY3djSEprQUVV"
   }
 }

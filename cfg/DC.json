@@ -1,7 +1,8 @@
 {
-  "server_name": "dc.abc.local",
-  "domain_name": "abc.local",
-  "root": "dc=abc,dc=local",
-  "user": "spb-kav",
-  "spwd": "PVFtY3djSEprQUVV"
+  "abc.local":
+      {"server_name": "dc.abc.local",
+      "domain_name": "abc.local",
+      "root": "dc=abc,dc=local",
+      "user": "spb-kav",
+      "spwd": "PVFtY3djSEprQUVV"}
 }
