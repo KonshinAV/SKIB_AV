@@ -1,5 +1,5 @@
 from utils import adtools, filestools, secure_string
-from utils import sqltools
+from utils import sqltools, openapi
 from pprint import pprint
 import numpy as np
 
@@ -22,7 +22,5 @@ if __name__ == '__main__':
                                username=KSC_SETTINGS['ksc_main']['user'],
                                pwd=KSC_SETTINGS['ksc_main']['pwd'])
 
-    pass
-'''
- i,j = np.where( a==value ) 
-'''
+    ksc_api = openapi.KscKlApi(user='automation_user',
+                              pwd=KSC_SETTINGS['ksc_main']['pwd'])

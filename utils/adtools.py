@@ -139,7 +139,7 @@ class ActiveDirectory:
         return computers_dict
 
 
-    def get_computers_in_ou (self, search_base=None):
+    def get_computers_in_ou (self, search_base='root'):
         '''
         Метод поиска записей типа Computer в домене по OU всех его потомках.
 
@@ -150,7 +150,7 @@ class ActiveDirectory:
                 Если OU задан некорректно - вернется пустой кортеж. Будет выполнена попытся его поиска в AD.
 
         '''
-        search_base = self.dc_root if search_base is None else search_base
+        search_base = self.dc_root if search_base == 'root' else search_base
         entries = self.dc_connection.extend.standard.paged_search(search_base=search_base,
                                                                   search_filter=f'(&(ObjectCategory=Computer))',
                                                                   search_scope=SUBTREE,
