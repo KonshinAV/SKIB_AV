@@ -34,14 +34,6 @@ class KlSqlServer:
         rows = self.cursor.fetchall()
         return np.array(rows)
 
-    def create_db(self):
-        pass
-
-    def drop_db(self):
-        pass
-
-
-
 if __name__ == '__main__':
 
     pass

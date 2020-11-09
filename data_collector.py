@@ -17,10 +17,14 @@ if __name__ == '__main__':
                                          pwd=DC_SETTINGS['abc.local']["pwd"],
                                          root=DC_SETTINGS['abc.local']["root"])
 
-    ksc = sqltools.KlSqlServer(server=KSC_SETTINGS['ksc_main']['db_server_name'],
+    ksc_sql = sqltools.KlSqlServer(server=KSC_SETTINGS['ksc_main']['db_server_name'],
                                database=KSC_SETTINGS['ksc_main']['db_name'],
                                username=KSC_SETTINGS['ksc_main']['user'],
                                pwd=KSC_SETTINGS['ksc_main']['pwd'])
 
     ksc_api = openapi.KscKlApi(user='automation_user',
                               pwd=KSC_SETTINGS['ksc_main']['pwd'])
+    print(ksc_sql.get_ksc_tasks())
+
+
+    # for i in child_serv: print(i)
