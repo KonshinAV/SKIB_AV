@@ -1,5 +1,7 @@
-from ldap3 import Server, Connection, SUBTREE, ALL
+from ldap3 import Server, Connection, SUBTREE, LEVEL, ALL
 from datetime import datetime
+from utils import filestools, secure_string
+from pprint import pprint
 
 class ActiveDirectory:
     def __init__(self, server_name, root, username, pwd, domain_name, auto_connection = True):
@@ -20,13 +22,12 @@ class ActiveDirectory:
         conn = Connection(server, user = self.dc_user, password = self.dc_pwd, auto_bind=True)
         return conn
 
-
     def get_computer (self, computer_name, find_criteria = 'CN'):
         '''
         Метод поиска записи типа Computer  в домене и сбора атрибутов записи.
 
         Поддерживаются следующие атрибуты:
-         existInDomian:bool
+         existInDomain:bool
          name:str
          displayName:str
          distinguishedName:str
@@ -78,15 +79,16 @@ class ActiveDirectory:
         entries  = self.dc_connection.entries
         ad_computer = {}
         if len(entries) == 0:
+            # Возврат None если объект с именем не найден
             return  None
         else:
             entries = entries[0]
-            ad_computer['existInDomian'] = True
+            ad_computer['existInDomain'] = True
             ad_computer['name'] = str(entries['name']).lower()
             ad_computer['distinguishedName'] = str(entries['distinguishedName']).lower()
             distinguishedName_reversed = str(entries['distinguishedName']).split(',')[::-1]
             ad_computer['distinguishedName_reversed'] = ','.join(distinguishedName_reversed)
-            del distinguishedName_reversed[-1]
+            del distinguishedName_reversed[-1] # Удаление имени объекта из строки DN
             ad_computer['location'] = ','.join(distinguishedName_reversed)
             ad_computer['displayName'] = str(entries['displayName'])
             ad_computer['dNSHostName'] = str(entries['dNSHostName']).lower()
@@ -127,7 +129,6 @@ class ActiveDirectory:
                 ad_computer['uptime'] = None
         return ad_computer
 
-
     def get_computers_for_list(self, computers_list, find_criteria = 'CN'):
         '''
         Метод загрузки информации по списку устройств.
@@ -138,10 +139,10 @@ class ActiveDirectory:
         computers_dict = {pc:self.get_computer(pc, find_criteria) for pc in computers_list}
         return computers_dict
 
-
     def get_computers_in_ou (self, search_base='root'):
+
         '''
-        Метод поиска записей типа Computer в домене по OU всех его потомках.
+        Метод поиска записей типа Computer в домене по OU и всех его потомках.
 
         :param search_base: str/None: Принимается полный путь OU в нотации AD. 'OU=XXX,OU=XXX,DC=XXX,DC=XXX'
                             Если не задано, то будет использоваться корень домена, как значение по умолчанию.
@@ -160,6 +161,40 @@ class ActiveDirectory:
                                                                   )
         computers = (self.get_computer(record['attributes']['name']) for record in entries if 'attributes' in record.keys())
         return tuple(computers)
+
+    def get_child_ou(self, organizational_unit):
+        '''
+        Метод получения OU-потомков относительно заданного OU на глубину равную 1 уровень (прямые потомки)
+        :param organizational_unit:str:OrganizationalUnit в нотации ActiveDirectory
+        :return:tuple: кортеж из distinguishedName с OU потомками
+        '''
+        self.ad_attrs = ('Name',
+                         'distinguishedName')
+        self.dc_connection.search(search_base=organizational_unit,
+                                  search_filter=f"(&(objectClass=OrganizationalUnit)(Name=*))",
+                                  search_scope=LEVEL,
+                                  attributes=self.ad_attrs
+                                  )
+        units = (str(i.distinguishedName) for i in self.dc_connection.entries)
+        return tuple(units)
+        pass
+
+    def get_ou_list_by_mask (self, search_mask):
+        """
+        Метод поиска OU в демене по маске имени OU
+        Оборачивающие * не установлены по умолчанию.
+        :param search_mask: str: Поисковая маска
+        :return: turple: Кортеж из OU найденых OU
+        """
+        self.ad_attrs = ('Name',
+                         'distinguishedName')
+        self.dc_connection.search(search_base=self.dc_root,
+                                  search_filter=f"(&(objectClass=OrganizationalUnit)(Name={search_mask}))",
+                                  search_scope=SUBTREE,
+                                  attributes=self.ad_attrs
+                                  )
+        units = (str(i.distinguishedName) for i in self.dc_connection.entries)
+        return tuple(units)
 
 if __name__ == '__main__':
     pass
